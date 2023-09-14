@@ -33,6 +33,7 @@ public struct AudioPlayerView: View {
             SeekerView()
             
             ButtonsStack()
+                .padding(.top, 20)
                 .padding(.bottom, 36)
             
             VolumeView()
