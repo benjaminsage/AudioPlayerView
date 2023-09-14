@@ -31,14 +31,9 @@ struct ImageView: View {
                 image
                     .resizable()
                     .scaledToFill()
-                    .scaleEffect(0.8)
-                    .shadow(color: .secondary, radius: 30, x: 0, y: 25)
-
-                image
-                    .resizable()
-                    .scaledToFill()
             }
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .shadow(color: .secondary.opacity(0.3), radius: 25, x: 0, y: 25)
             .scaleEffect(model.isPlaying ? 1.02 : 0.75)
             .animation(animation, value: model.isPlaying)
     }
