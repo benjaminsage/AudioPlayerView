@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ImageView: View {
     @EnvironmentObject var model: AudioModel
+    var image: Image
     
     var animation: Animation {
         model.isPlaying ? expand : contract
@@ -27,7 +28,7 @@ struct ImageView: View {
         Color.clear
             .aspectRatio(1, contentMode: .fit)
             .overlay {
-                Image("image")
+                image
                     .resizable()
                     .scaledToFill()
             }
@@ -42,7 +43,7 @@ struct ImageView_Previews: PreviewProvider {
         @StateObject var model = AudioModel.sample
         
         var body: some View {
-            ImageView()
+            ImageView(image: Image(systemName: "checkmark"))
                 .onTapGesture {
                     model.isPlaying.toggle()
                 }
