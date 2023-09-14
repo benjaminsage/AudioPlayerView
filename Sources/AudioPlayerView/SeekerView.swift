@@ -19,6 +19,7 @@ struct SeekerView: View {
                     musicTextView
                 }
                 .animation(.spring(), value: model.timeDragging)
+                .frame(maxWidth: .infinity)
             }
     }
     
@@ -61,6 +62,7 @@ struct SeekerView: View {
 struct SeekerView_Previews: PreviewProvider {
     static var previews: some View {
         SeekerView()
+            .padding()
             .environmentObject(AudioModel.sample)
     }
 }
