@@ -38,17 +38,7 @@ class AudioModel: ObservableObject {
             AVAudioSession.sharedInstance().outputVolume
         }
         set {
-            // Create an MPVolumeView and get its slider to adjust the system volume
-            if volumeView == nil {
-                volumeView = MPVolumeView(frame: CGRect(x: -1000, y: -1000, width: 0, height: 0))
-                for view in volumeView!.subviews {
-                    if let slider = view as? UISlider {
-                        volumeSlider = slider
-                        break
-                    }
-                }
-            }
-            volumeSlider?.value = newValue
+            MPVolumeView.setVolume(newValue)
         }
     }
 
@@ -106,4 +96,15 @@ class AudioModel: ObservableObject {
 
 extension AudioModel {
     static let sample = AudioModel(url: URL(string: "https://samplelib.com/lib/preview/mp3/sample-3s.mp3"))
+}
+
+extension MPVolumeView {
+    static func setVolume(_ volume: Float) -> Void {
+        let volumeView = MPVolumeView()
+        let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
+            slider?.value = volume
+        }
+    }
 }
