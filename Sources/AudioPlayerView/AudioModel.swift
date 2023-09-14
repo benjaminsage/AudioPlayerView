@@ -43,6 +43,8 @@ class AudioModel: ObservableObject {
         guard let url = url else { return }
         player = AVPlayer(url: url)
         addPeriodicTimeObserver()
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+        try? AVAudioSession.sharedInstance().setActive(true)
     }
     
     enum Direction {
