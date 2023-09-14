@@ -8,7 +8,6 @@
 import Foundation
 import AVKit
 import CoreGraphics
-import MediaPlayer
 
 class AudioModel: ObservableObject {
     @Published var player: AVPlayer?
@@ -30,28 +29,20 @@ class AudioModel: ObservableObject {
     @Published var tempVolume: Float?
     @Published var volumeDragging = false
     
-    private var volumeView: MPVolumeView?
-    private var volumeSlider: UISlider?
-    
     var volume: Float {
         get {
-            AVAudioSession.sharedInstance().outputVolume
-        }
-        set {
-            MPVolumeView.setVolume(newValue)
+            player?.volume ?? 0
+        } set {
+            player?.volume = newValue
         }
     }
-
+    
     let audioURL = URL(string: "https://stylelife-challenge-c32f20f799b2.herokuapp.com/resources/day2.mp3")!
     
     init(url: URL?) {
         guard let url = url else { return }
         player = AVPlayer(url: url)
         addPeriodicTimeObserver()
-    }
-    
-    deinit {
-        volumeView = nil
     }
     
     enum Direction {
@@ -95,16 +86,5 @@ class AudioModel: ObservableObject {
 }
 
 extension AudioModel {
-    static let sample = AudioModel(url: URL(string: "https://samplelib.com/lib/preview/mp3/sample-3s.mp3"))
-}
-
-extension MPVolumeView {
-    static func setVolume(_ volume: Float) -> Void {
-        let volumeView = MPVolumeView()
-        let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
-
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-            slider?.value = volume
-        }
-    }
+    static let sample = AudioModel(url: URL(string: "https://samplelib.com/lib/preview/mp3/sample-3s.mp3")!)
 }

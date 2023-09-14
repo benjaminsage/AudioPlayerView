@@ -41,7 +41,6 @@ public struct AudioPlayerView: View {
                         
             AirPlayButton()
                 .frame(width: 48, height: 48)
-            
 
         }
         .padding(.horizontal, 32)
