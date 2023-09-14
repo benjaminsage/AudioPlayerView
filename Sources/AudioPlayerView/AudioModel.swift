@@ -39,8 +39,8 @@ class AudioModel: ObservableObject {
     
     let audioURL = URL(string: "https://stylelife-challenge-c32f20f799b2.herokuapp.com/resources/day2.mp3")!
     
-    init(url: String) {
-        guard let url = URL(string: url) else { return }
+    init(url: URL?) {
+        guard let url = url else { return }
         player = AVPlayer(url: url)
         addPeriodicTimeObserver()
     }
@@ -86,5 +86,5 @@ class AudioModel: ObservableObject {
 }
 
 extension AudioModel {
-    static let sample = AudioModel(url: "https://samplelib.com/lib/preview/mp3/sample-3s.mp3")
+    static let sample = AudioModel(url: URL(string: "https://samplelib.com/lib/preview/mp3/sample-3s.mp3"))
 }

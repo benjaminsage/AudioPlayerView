@@ -13,7 +13,7 @@ public struct AudioPlayerView: View {
     var title: String = "Title"
     var subtitle: String = "Subtitle"
     
-    public init(url: String, title: String, subtitle: String) {
+    public init(url: URL?, title: String, subtitle: String) {
         _model = StateObject(wrappedValue: AudioModel(url: url))
         self.title = title
         self.subtitle = subtitle
@@ -50,7 +50,7 @@ public struct AudioPlayerView: View {
 struct AudioPlayerView_Previews: PreviewProvider {
     static var previews: some View {
         AudioPlayerView(
-            url: "https://samplelib.com/lib/preview/mp3/sample-3s.mp3",
+            url: URL(string: "https://samplelib.com/lib/preview/mp3/sample-3s.mp3"),
             title: "Sample", subtitle: "Subtitle")
     }
 }
