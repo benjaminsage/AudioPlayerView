@@ -33,7 +33,7 @@ struct ImageView: View {
                     .scaledToFill()
             }
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .shadow(color: .secondary.opacity(0.3), radius: 25, x: 0, y: 25)
+            .shadow(color: .secondary.opacity(0.3), radius: 25, x: 0, y: 15)
             .scaleEffect(model.isPlaying ? 1.02 : 0.75)
             .animation(animation, value: model.isPlaying)
     }
