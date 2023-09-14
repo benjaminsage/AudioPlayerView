@@ -65,7 +65,7 @@ struct ButtonsStack: View {
                         }
                     }
                 }
-                .font(.system(size: 50))
+                .font(.system(size: 43))
 
             Button {
                 model.seek30(.forward)

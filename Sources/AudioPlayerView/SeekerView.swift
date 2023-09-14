@@ -12,7 +12,7 @@ struct SeekerView: View {
     
     var body: some View {
         Color.clear
-            .frame(height: 40)
+            .frame(height: 60)
             .overlay {
                 VStack {
                     SliderView(value: $model.currentTime, temp: $model.tempTime, max: model.duration, isDragging: $model.timeDragging)
