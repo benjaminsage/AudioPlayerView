@@ -15,7 +15,7 @@ struct SliderView<Number: BinaryFloatingPoint>: View {
 
     @State private var hitEdge = false
     @State private var barWidth: CGFloat = 1
-    private let barHeight: CGFloat = 6
+    private let barHeight: CGFloat = 8
 
     var barFactor: Number {
         let value = clamped((temp ?? value) / max)

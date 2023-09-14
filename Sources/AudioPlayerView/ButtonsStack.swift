@@ -78,7 +78,7 @@ struct ButtonsStack: View {
             }
         }
         .buttonStyle(PlayButtonStyle())
-        .font(.largeTitle)
+        .font(.title)
         .foregroundColor(.primary)
         .padding(.horizontal)
     }
