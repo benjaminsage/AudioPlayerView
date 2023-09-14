@@ -15,8 +15,8 @@ struct VolumeView: View {
         Color.clear
             .frame(height: 40)
             .overlay {
-                HiddenVolumeSlider()
-                    .frame(width: 0, height: 0) // It's hidden, so it won't be visible in your SwiftUI view.
+//                HiddenVolumeSlider()
+//                    .frame(width: 0, height: 0) // It's hidden, so it won't be visible in your SwiftUI view.
 
                 HStack(spacing: 12) {
                     icon("speaker.fill", .trailing)
