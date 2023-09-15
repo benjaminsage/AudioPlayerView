@@ -14,13 +14,18 @@ struct SliderView<Number: BinaryFloatingPoint>: View {
     @Binding var isDragging: Bool
 
     @State private var hitEdge = false
-    @State private var barWidth: CGFloat = 1
+    @State private var barWidth: CGFloat?
     private let barHeight: CGFloat = 7
 
     var barFactor: Number {
         let value = clamped((temp ?? value) / max)
         guard value.isFinite else { return 0 }
         return value
+    }
+    
+    var width: CGFloat? {
+        guard let barWidth = barWidth else { return nil }
+        return isDragging ? barWidth * 1.05 : nil
     }
 
     var body: some View {
@@ -34,11 +39,16 @@ struct SliderView<Number: BinaryFloatingPoint>: View {
                     .frame(width: g.size.width * CGFloat(barFactor))
             }
             .onAppear {
+                guard barWidth == nil, g.size.width != 0 else { return }
                 barWidth = g.size.width
+            }
+            .onChange(of: g.size.width) { width in
+                guard barWidth == nil, width != 0 else { return }
+                barWidth = width
             }
         }
         .frame(
-            width: isDragging ? barWidth * 1.05 : nil,
+            width: width,
             height: isDragging ? barHeight * 3 : barHeight
         )
         .gesture(
@@ -51,6 +61,7 @@ struct SliderView<Number: BinaryFloatingPoint>: View {
     }
 
     func onDragChanged(drag: DragGesture.Value) {
+        guard let barWidth = barWidth else { return }
         isDragging = true
         let dragOffset = drag.translation.width
         let valueChange = dragOffset / barWidth * CGFloat(max)
@@ -80,8 +91,15 @@ struct SliderView_Previews: PreviewProvider {
         @State private var temp: Double?
         @State private var isDragging = false
         
+        @State private var showSheet = false
+        
         var body: some View {
-            SliderView(value: $value, temp: $temp, max: 1000, isDragging: $isDragging)
+            Button("tappable") {
+                showSheet = true
+            }
+            .sheet(isPresented: $showSheet) {
+                SliderView(value: $value, temp: $temp, max: 1000, isDragging: $isDragging)
+            }
         }
     }
     

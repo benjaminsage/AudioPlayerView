@@ -61,9 +61,22 @@ struct SeekerView: View {
 }
 
 struct SeekerView_Previews: PreviewProvider {
+    struct Preview: View {
+        @State private var showSheet = false
+        
+        var body: some View {
+            Button("tap tap") {
+                showSheet = true
+            }
+            .sheet(isPresented: $showSheet) {
+                SeekerView()
+                    .padding()
+                    .environmentObject(AudioModel.sample)
+            }
+        }
+    }
+    
     static var previews: some View {
-        SeekerView()
-            .padding()
-            .environmentObject(AudioModel.sample)
+        Preview()
     }
 }
