@@ -67,7 +67,6 @@ struct SliderView<Number: BinaryFloatingPoint>: View {
     }
 
     func onDragEnded(_ value: DragGesture.Value) {
-        print("ended")
         self.value = clamped(temp ?? 0)
         temp = nil
         isDragging = false

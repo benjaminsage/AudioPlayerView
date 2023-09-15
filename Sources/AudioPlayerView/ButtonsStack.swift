@@ -12,8 +12,6 @@ struct ButtonsStack: View {
     @EnvironmentObject var model: AudioModel
 
     @State private var scale: CGFloat = 1
-    @State private var backRotationAngle: Double = 0
-    @State private var forwardRotationAngle: Double = 0
     
     var playBinding: Binding<Bool> {
         Binding<Bool>(
@@ -38,12 +36,8 @@ struct ButtonsStack: View {
         HStack(spacing: 50) {
             Button {
                 model.seek30(.reverse)
-                withAnimation(.spring()) {
-                    backRotationAngle -= 360
-                }
             } label: {
                 Image(systemName: "gobackward.30")
-                    .rotationEffect(Angle(degrees: backRotationAngle))
             }
             
             Image(systemName: "play.fill")
@@ -69,12 +63,8 @@ struct ButtonsStack: View {
 
             Button {
                 model.seek30(.forward)
-                withAnimation(.spring()) {
-                    forwardRotationAngle += 360
-                }
             } label: {
                 Image(systemName: "goforward.30")
-                    .rotationEffect(Angle(degrees: forwardRotationAngle))
             }
         }
         .buttonStyle(PlayButtonStyle())
