@@ -37,6 +37,7 @@ struct SeekerView: View {
     
     func musicLabel(for time: Double) -> some View {
         Text(timeString(for: time) ?? "--:--")
+            .animation(nil, value: timeString(for: time))
             .foregroundStyle(model.timeDragging ? .primary : .tertiary)
             .font(.caption2)
     }
