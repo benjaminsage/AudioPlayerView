@@ -14,18 +14,13 @@ struct SliderView<Number: BinaryFloatingPoint>: View {
     @Binding var isDragging: Bool
 
     @State private var hitEdge = false
-    @State private var barWidth: CGFloat?
+    @State private var barWidth: CGFloat = 1
     private let barHeight: CGFloat = 7
 
     var barFactor: Number {
         let value = clamped((temp ?? value) / max)
         guard value.isFinite else { return 0 }
         return value
-    }
-    
-    var width: CGFloat? {
-        guard let barWidth = barWidth else { return nil }
-        return isDragging ? barWidth * 1.05 : nil
     }
 
     var body: some View {
@@ -39,16 +34,16 @@ struct SliderView<Number: BinaryFloatingPoint>: View {
                     .frame(width: g.size.width * CGFloat(barFactor))
             }
             .onAppear {
-                guard barWidth == nil, g.size.width != 0 else { return }
                 barWidth = g.size.width
             }
             .onChange(of: g.size.width) { width in
-                guard barWidth == nil, width != 0 else { return }
-                barWidth = width
+                if !isDragging {
+                    barWidth = width
+                }
             }
         }
         .frame(
-            width: width,
+            width: isDragging ? barWidth * 1.05 : nil,
             height: isDragging ? barHeight * 3 : barHeight
         )
         .gesture(
@@ -61,7 +56,6 @@ struct SliderView<Number: BinaryFloatingPoint>: View {
     }
 
     func onDragChanged(drag: DragGesture.Value) {
-        guard let barWidth = barWidth else { return }
         isDragging = true
         let dragOffset = drag.translation.width
         let valueChange = dragOffset / barWidth * CGFloat(max)
