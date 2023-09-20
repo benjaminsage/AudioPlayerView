@@ -44,8 +44,8 @@ public struct AudioPlayerView: View {
 
         }
         .padding(.horizontal, 32)
-        .onDisappear {
-            model.player?.pause()
+        .onAppear {
+            model.updateNowPlayingInfo(title: title, artist: subtitle)
         }
         .environmentObject(model)
     }

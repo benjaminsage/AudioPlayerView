@@ -8,6 +8,7 @@
 import Foundation
 import AVKit
 import CoreGraphics
+import MediaPlayer
 
 class AudioModel: ObservableObject {
     @Published var player: AVPlayer?
@@ -45,6 +46,7 @@ class AudioModel: ObservableObject {
         addPeriodicTimeObserver()
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
         try? AVAudioSession.sharedInstance().setActive(true)
+        setupRemoteTransportControls()
     }
     
     enum Direction {
@@ -84,6 +86,34 @@ class AudioModel: ObservableObject {
                 currentTime = time.seconds
             }
         }
+    }
+    
+    func setupRemoteTransportControls() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+
+        commandCenter.playCommand.addTarget { [unowned self] event in
+            if self.player?.rate == 0.0 {
+                self.player?.play()
+                return .success
+            }
+            return .commandFailed
+        }
+
+        commandCenter.pauseCommand.addTarget { [unowned self] event in
+            if self.player?.rate == 1.0 {
+                self.player?.pause()
+                return .success
+            }
+            return .commandFailed
+        }
+    }
+    
+    func updateNowPlayingInfo(title: String, artist: String) {
+        var nowPlayingInfo = [String : Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = title
+        nowPlayingInfo[MPMediaItemPropertyArtist] = artist
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
 }
 
