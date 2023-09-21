@@ -107,7 +107,7 @@ class AudioModel: ObservableObject {
             }
             return .commandFailed
         }
-        
+
         commandCenter.skipForwardCommand.preferredIntervals = [30]
         commandCenter.skipForwardCommand.addTarget { [unowned self] event in
             self.seek30(.forward)
@@ -119,8 +119,18 @@ class AudioModel: ObservableObject {
             self.seek30(.reverse)
             return .success
         }
+
+        commandCenter.changePlaybackPositionCommand.isEnabled = true
+        commandCenter.changePlaybackPositionCommand.addTarget { [unowned self] event in
+            if let event = event as? MPChangePlaybackPositionCommandEvent {
+                self.player?.seek(to: CMTime(seconds: event.positionTime, preferredTimescale: 600), completionHandler: { _ in
+
+                })
+                return .success
+            }
+            return .commandFailed
+        }
     }
-    
     func updateNowPlayingInfo(title: String, artist: String, image: UIImage?) {
         var nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = title
