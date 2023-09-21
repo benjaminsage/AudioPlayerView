@@ -169,7 +169,8 @@ class AudioModel: NSObject, ObservableObject {
         if context == &playerItemContext, keyPath == "status", let status = player?.currentItem?.status {
             switch status {
             case .readyToPlay:
-                updateNowPlayingInfo(title: "Your Title", artist: "Your Artist", image: nil) // Replace nil with your UIImage
+                break
+//                updateNowPlayingInfo(title: "Your Title", artist: "Your Artist", image: nil) // Replace nil with your UIImage
             default:
                 break
             }
