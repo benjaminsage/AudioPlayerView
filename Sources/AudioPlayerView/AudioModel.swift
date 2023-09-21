@@ -93,12 +93,15 @@ class AudioModel: NSObject, ObservableObject {
             if let duration = self.player?.currentItem?.duration {
                 self.duration = duration.seconds
                 currentTime = time.seconds
-
-                var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [String: Any]()
-                nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
-                MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+                updateElapsedTime(elapsedTime: currentTime)
             }
         }
+    }
+    
+    func updateElapsedTime(elapsedTime: Double) {
+        var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = elapsedTime
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     
     func setupRemoteTransportControls() {
@@ -147,7 +150,7 @@ class AudioModel: NSObject, ObservableObject {
     }
     
     func updateNowPlayingInfo(title: String? = nil, artist: String? = nil, image: UIImage? = nil) {
-        var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [String: Any]()
+        var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
 
         if let title = title {
             nowPlayingInfo[MPMediaItemPropertyTitle] = title
@@ -160,6 +163,11 @@ class AudioModel: NSObject, ObservableObject {
         if let image = image {
             let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in return image }
             nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+        }
+        
+        if let playerItem = player?.currentItem, playerItem.status == .readyToPlay {
+            nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = playerItem.duration.seconds
+            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = player?.rate ?? 0
         }
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
