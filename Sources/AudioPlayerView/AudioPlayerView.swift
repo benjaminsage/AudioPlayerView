@@ -13,9 +13,9 @@ public struct AudioPlayerView: View {
     
     var title: String = "Title"
     var subtitle: String = "Subtitle"
-    var image: Image
+    var image: UIImage
     
-    public init(url: URL?, title: String, subtitle: String, image: Image) {
+    public init(url: URL?, title: String, subtitle: String, image: UIImage) {
         _model = StateObject(wrappedValue: AudioModel(url: url))
         self.title = title
         self.subtitle = subtitle
@@ -24,7 +24,7 @@ public struct AudioPlayerView: View {
         
     public var body: some View {
         VStack {
-            ImageView(image: image)
+            ImageView(image: Image(uiImage: image))
                 .frame(maxHeight: .infinity)
 
             TitleView(title: title, subtitle: subtitle)
@@ -45,7 +45,7 @@ public struct AudioPlayerView: View {
         }
         .padding(.horizontal, 32)
         .onAppear {
-            model.updateNowPlayingInfo(title: title, artist: subtitle)
+            model.updateNowPlayingInfo(title: title, artist: subtitle, image: image)
         }
         .environmentObject(model)
     }
@@ -55,6 +55,6 @@ struct AudioPlayerView_Previews: PreviewProvider {
     static var previews: some View {
         AudioPlayerView(
             url: URL(string: "https://samplelib.com/lib/preview/mp3/sample-3s.mp3"),
-            title: "Sample", subtitle: "Subtitle", image: Image(systemName: "checkmark"))
+            title: "Sample", subtitle: "Subtitle", image: UIImage(systemName: "checkmark") ?? UIImage())
     }
 }

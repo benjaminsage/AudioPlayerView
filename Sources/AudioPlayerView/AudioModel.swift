@@ -9,6 +9,7 @@ import Foundation
 import AVKit
 import CoreGraphics
 import MediaPlayer
+import SwiftUI
 
 class AudioModel: ObservableObject {
     @Published var player: AVPlayer?
@@ -106,12 +107,31 @@ class AudioModel: ObservableObject {
             }
             return .commandFailed
         }
+        
+        commandCenter.skipForwardCommand.preferredIntervals = [30]
+        commandCenter.skipForwardCommand.addTarget { [unowned self] event in
+            self.seek30(.forward)
+            return .success
+        }
+
+        commandCenter.skipBackwardCommand.preferredIntervals = [30]
+        commandCenter.skipBackwardCommand.addTarget { [unowned self] event in
+            self.seek30(.reverse)
+            return .success
+        }
     }
     
-    func updateNowPlayingInfo(title: String, artist: String) {
+    func updateNowPlayingInfo(title: String, artist: String, image: UIImage?) {
         var nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = title
         nowPlayingInfo[MPMediaItemPropertyArtist] = artist
+
+        if let image = image {
+            let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in
+                return image
+            }
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+        }
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
