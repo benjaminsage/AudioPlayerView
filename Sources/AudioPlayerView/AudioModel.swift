@@ -146,31 +146,30 @@ class AudioModel: NSObject, ObservableObject {
         }
     }
     
-    func updateNowPlayingInfo(title: String, artist: String, image: UIImage?) {
-        var nowPlayingInfo = [String : Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = title
-        nowPlayingInfo[MPMediaItemPropertyArtist] = artist
-        
-        if let duration = player?.currentItem?.duration.seconds {
-            nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
+    func updateNowPlayingInfo(title: String? = nil, artist: String? = nil, image: UIImage? = nil) {
+        var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [String: Any]()
+
+        if let title = title {
+            nowPlayingInfo[MPMediaItemPropertyTitle] = title
+        }
+
+        if let artist = artist {
+            nowPlayingInfo[MPMediaItemPropertyArtist] = artist
         }
         
         if let image = image {
-            let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in
-                return image
-            }
+            let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in return image }
             nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
         }
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
-    
+
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if context == &playerItemContext, keyPath == "status", let status = player?.currentItem?.status {
             switch status {
             case .readyToPlay:
-                break
-//                updateNowPlayingInfo(title: "Your Title", artist: "Your Artist", image: nil) // Replace nil with your UIImage
+                updateNowPlayingInfo()
             default:
                 break
             }
