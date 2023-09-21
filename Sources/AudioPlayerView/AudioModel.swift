@@ -11,7 +11,9 @@ import CoreGraphics
 import MediaPlayer
 import SwiftUI
 
-class AudioModel: ObservableObject {
+class AudioModel: NSObject, ObservableObject {
+    private var playerItemContext = 0
+    
     @Published var player: AVPlayer?
     @Published var isPlaying: Bool = false
     @Published var playbackProgress: Double = 0.0
@@ -42,14 +44,20 @@ class AudioModel: ObservableObject {
     let audioURL = URL(string: "https://stylelife-challenge-c32f20f799b2.herokuapp.com/resources/day2.mp3")!
     
     init(url: URL?) {
+        super.init()
+
         guard let url = url else { return }
+        
         player = AVPlayer(url: url)
+        
         addPeriodicTimeObserver()
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
         try? AVAudioSession.sharedInstance().setActive(true)
         setupRemoteTransportControls()
+        
+        player?.currentItem?.addObserver(self, forKeyPath: "status", options: [.new], context: &playerItemContext)
     }
-    
+
     enum Direction {
         case forward, reverse
     }
@@ -128,30 +136,48 @@ class AudioModel: ObservableObject {
         commandCenter.changePlaybackPositionCommand.addTarget { [unowned self] event in
             if let event = event as? MPChangePlaybackPositionCommandEvent {
                 self.player?.seek(to: CMTime(seconds: event.positionTime, preferredTimescale: 600), completionHandler: { _ in
-
+                    var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+                    nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = event.positionTime
+                    MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
                 })
                 return .success
             }
             return .commandFailed
         }
     }
+    
     func updateNowPlayingInfo(title: String, artist: String, image: UIImage?) {
         var nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = title
         nowPlayingInfo[MPMediaItemPropertyArtist] = artist
-
+        
         if let duration = player?.currentItem?.duration.seconds {
             nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
         }
-
+        
         if let image = image {
             let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in
                 return image
             }
             nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
         }
-
+        
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if context == &playerItemContext, keyPath == "status", let status = player?.currentItem?.status {
+            switch status {
+            case .readyToPlay:
+                updateNowPlayingInfo(title: "Your Title", artist: "Your Artist", image: nil) // Replace nil with your UIImage
+            default:
+                break
+            }
+        }
+    }
+
+    deinit {
+        player?.currentItem?.removeObserver(self, forKeyPath: "status", context: &playerItemContext)
     }
 }
 
