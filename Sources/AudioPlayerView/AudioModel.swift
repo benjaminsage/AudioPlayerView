@@ -85,6 +85,10 @@ class AudioModel: ObservableObject {
             if let duration = self.player?.currentItem?.duration {
                 self.duration = duration.seconds
                 currentTime = time.seconds
+
+                var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [String: Any]()
+                nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
+                MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
             }
         }
     }
@@ -135,6 +139,10 @@ class AudioModel: ObservableObject {
         var nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = title
         nowPlayingInfo[MPMediaItemPropertyArtist] = artist
+
+        if let duration = player?.currentItem?.duration.seconds {
+            nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
+        }
 
         if let image = image {
             let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in
